@@ -27,8 +27,7 @@ export async function generateMetadata({
     );
     const result = await response.json();
     console.log("Certificate data fetch : ", result)
-    const baseUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "https://edu.immverse.ai";
+    const baseUrl ="https://share-certificate-app.onrender.com";
 
     if (!result?.validateCertificate?.course) {
       return {

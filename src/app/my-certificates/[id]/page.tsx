@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from "react";
 
-interface CertificatePageProps {
+interface CertificatePageParams {
   params: {
     id: string;
   };
@@ -19,7 +19,7 @@ interface CertificateData {
 
 async function fetchCertificateData(id: string): Promise<CertificateData> {
   const fallbackTitle = "Certificate Not Found";
-  const fallbackDescription = "the_requested_certificate_could_not_be_found";
+  const fallbackDescription = "The requested certificate could not be found.";
 
   if (!id || !/^[0-9a-fA-F\-]{36}$/.test(id)) {
     return {
@@ -30,10 +30,11 @@ async function fetchCertificateData(id: string): Promise<CertificateData> {
   }
 
   try {
+    const baseurl = "https://share-certificate-app.onrender.com";
     const response = await fetch(
       `https://devapiv1.immverse.ai/api/v1/user-routes/predefined-courses/validate-certificate/${id}`,
       {
-        next: { revalidate: 3600 }, // revalidate every hour
+        next: { revalidate: 3600 }, // Revalidate every hour
       }
     );
     const result = await response.json();
@@ -53,7 +54,7 @@ async function fetchCertificateData(id: string): Promise<CertificateData> {
       description: course.courseDescription,
       certificateUrl,
       courseThumbnail: course.courseThumbnail,
-      urlPath: `/my-certificates/${id}`,
+      urlPath: `${baseurl}/my-certificates/${id}`,
       formats: ["jpg", "png", "webp"],
       certificateNotFound: false,
     };
@@ -67,17 +68,15 @@ async function fetchCertificateData(id: string): Promise<CertificateData> {
   }
 }
 
-export async function generateStaticParams() {
-  return []; // This code black is here to tell nextjs : "I don’t know any certificate IDs at build time don’t pre-render anything."
-}
-
-// If you don’t know all IDs at build time, you can allow on-demand generation by setting:
-export const dynamicParams = true; // fallback behavior
+// Allow on-demand static generation
+export const dynamicParams = true;
 export const revalidate = false;
 
-export default async function CertificatePage({
-  params,
-}: CertificatePageProps) {
+export async function generateStaticParams() {
+  return []; // No pre-rendered IDs at build time
+}
+
+export default async function CertificatePage({ params }: CertificatePageParams) {
   const { id } = params;
   const data = await fetchCertificateData(id);
 
