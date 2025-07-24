@@ -1,7 +1,4 @@
 /** @type {import('next').NextConfig} */
-// /** @type {import('createNextIntlPlugin).next-intl/plugin} */
-import createNextIntlPlugin from "next-intl/plugin";
-import { env } from "process";
 
 const nextConfig = {
   images: {
